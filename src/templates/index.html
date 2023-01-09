@@ -4,11 +4,24 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="static/index.css">
     <title>Pokedex - MartinGouv</title>
 </head>
 <body>
     <h1>PokeDex</h1>
-    <div id="poke_container" class="poke-container"></div>
+    <div id="poke_container" class="poke-container">
+        {% for item in items %}
+            <div class="pokemon" style="{{ item.element_style }}">
+                <div class="img-container">
+                    <img src="{{ item.picture }}" alt="{{ item.name }}" />
+                </div>
+                <div class="info">
+                    <span class="number">#{{ item.formatted_id }}</span>
+                    <h3 class="name">{{ item.name }}</h3>
+                    <small class="type">Type: <span>{{ item.type }}</span></small>
+                </div>
+            </div>
+        {% endfor %} 
+    </div>
 </body>
 </html>
