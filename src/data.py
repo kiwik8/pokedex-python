@@ -1,7 +1,12 @@
-import requests
+import requests_cache
 import json
+import re
 
 COLORS = {
+    "steel": "#5E6F6F",
+    "dark": "#354141",
+    "ice": "#98E6F1",
+    "ghost": "#D6DBE6",
 	"fire": '#FDDFDF',
 	"grass": '#DEFDE0',
 	"electric": '#FCF7DE',
@@ -21,10 +26,14 @@ COLORS = {
 
 
 
-def get_pokemon(id: int) -> dict:
-    req = requests.get(f"https://pokeapi.co/api/v2/pokemon/{id}/")
+def get_pokemon(id: int, session: requests_cache.CachedSession) -> dict:
+    req = session.get(f"https://pokeapi.co/api/v2/pokemon/{id}/")
     data = json.loads(req.content)
     name = data['name']
+    if "-" in name:
+        reg = re.search("\-(.*)", name).group(0)
+        reg = len(reg)
+        name = name[:-reg]
     type = data["types"][0]["type"]["name"]
     color = COLORS[type]
     picture = data["sprites"]["front_default"]
@@ -38,3 +47,12 @@ def get_pokemon(id: int) -> dict:
         'formatted_id': formatted_id,
     }
     return data
+
+
+def get_all_pokemons(limit: int):
+    html = []
+    session = requests_cache.CachedSession("cache")
+    for i in range(1, limit+1):
+        data = get_pokemon(i, session)
+        html.append(data)
+    return html
